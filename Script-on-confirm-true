@@ -1,0 +1,74 @@
+if(input.Confirm == true)
+{
+	show Employer_Contact_Person;
+	//Counter
+	mp = Map();
+	string = "";
+	employerList = List();
+	if(input.Existing_Job_Opening.toList().size() > 0)
+	{
+		for each  e in input.Existing_Job_Opening
+		{
+			jo = ifNull(e.Active_Job_Openings,"");
+			if(jo != "")
+			{
+				//Get the Employer ID
+				//This configuration is not mentioned in this post. Job Openings Map is another hidden multi-line field that stores a map of the job opening name (key) and the ID (value)
+				//The config is written in the same script that populates the job opening picklist value on the Existing Job Openings subform
+				joMap = input.Job_Openings_Map.toMap();
+				//info joMap;
+				joID = joMap.get(employer).toLong();
+				info joID;
+				//Get the Account
+				jobOpening = zoho.crm.getRecordById("Job_Openings",joID);
+				accountid = jobOpening.get("Account_Lookup").get("id").toLong();
+				account = zoho.crm.getRecordById("Accounts",accountid);
+				//Get the Contacts for later
+				contacts = zoho.crm.getRelatedRecords("Contacts","Accounts",accountid);				
+				//Get the Account Name
+				employerName = account.get("Account_Name");
+				//Add that into the Employer Contact Person subform
+				row_n = Zoho_Job_Placements_and_Intros.Employer_Contact_Person();
+				if(employerName not in employerList)
+				{
+					row_n.Employer=employerName;
+					employerList.add(employerName);
+					//Declare a variable to hold the collection of rows
+					update = Collection();
+					update.insert(row_n);
+					//Insert the rows into the subform through the variable
+					input.Employer_Contact_Person.insert(update);
+					//Create the Contact maps
+					//Map 1 - Account Name (key), Contact Names (value)
+					//Map 2 - Contact Name (key), Contact ID (value)
+					if(contacts.size() > 0)
+					{
+						contactList = List();
+						for each  c in contacts
+						{
+							contactList.add(c.get("Full_Name"));
+							string = string + "\"" + c.get("Full_Name") + "\"" + ":" + c.get("id") + ",";
+						}
+						mp.put(employerName,contactList);
+					}
+				}
+			}
+		}
+	}
+	//Insert Map 1
+	input.Employer_Contact_Map = mp.toString();
+	//Insert Map 2
+	mapstring = "{" + string + "}";
+	mapstring = mapstring.removeLastOccurence(",");
+	input.Contact_ID_Map = mapstring;
+	//Trigger the hidden checkbox
+	input.Trigger = true;
+}
+else
+{
+	hide Employer_Contact_Person;
+	if(input.Employer_Contact_Person.toList().size() > 0)
+	{
+		input.Employer_Contact_Person.clear();
+	}
+}

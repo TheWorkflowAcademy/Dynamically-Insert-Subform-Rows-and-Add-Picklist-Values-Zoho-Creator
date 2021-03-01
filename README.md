@@ -102,6 +102,7 @@ if(input.Confirm == true)
 	* Outside of the contact loop, we put variable *mp* with the Account Name (*employerName*) as the key and *contactList* as the value.
 * For Map 2:
 	* In the same contact loop, use the *string* variable that we have defined earlier to create a map of the contact Full Name and ID. 
+	* This map will be used later in your on-submission script to find the contact ID based on the contact selected by the user.
 
 ```javascript
 					if(contacts.size() > 0)
@@ -150,13 +151,15 @@ else
 ### Script (Trigger == true)
 
 #### Dynamically Add Contact List as Picklist Values in the Employer Contact Person Subform
-* 
+* Iterate through each row of the Employer Contact Person subform.
+* For each row, get the hidden multi-line field (Employer Contact Map), convert it into a readable map with a *toMap()* function.
+* Use a *get()* function to get the Contact List with the Employer Name that is already populated on the subform.
+* *ui.add* function is used to dynamically add the contact list into the respective Contact Person field in the subform.
 
 ```javascript
 for each  emp in Employer_Contact_Person
 {
 	mp = input.Employer_Contact_Map.toMap();
-	info mp.get(emp.Employer);
 	emp.Contact_Person:ui.add(mp.get(emp.Employer));
 }
 ```

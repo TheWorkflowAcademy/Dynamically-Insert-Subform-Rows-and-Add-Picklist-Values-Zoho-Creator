@@ -1,5 +1,5 @@
 # Dynamically-Populate-Creator-Subform-Rows-and-Add-Picklist-Values
-This set up allows you to [dynamically add rows](https://www.zoho.com/deluge/help/miscellaneous/insert-subform-row.html) and [add to picklist dynamically](https://www.zoho.com/creator/help/fields/add-to-picklist-dynamically.html) with values unique to each row on a Zoho Creator subform.
+This set up allows you to [insert subform rows](https://www.zoho.com/deluge/help/miscellaneous/insert-subform-row.html) and [add to picklist dynamically](https://www.zoho.com/creator/help/fields/add-to-picklist-dynamically.html) with values unique to each row on a Zoho Creator subform.
 
 ## Example Scenario
 Suppose you have a Creator Form to help a recruitment agency place talents to job openings, where upon submission of the form, it creates a job placement record in CRM and sends an email notification to the employer via CRM. In the Creator Form, you have a subform where on addition of a row, it dynamically adds to a picklist field existing job openings which are records stored in a custom module in CRM. Each job opening is linked to a partner (an Account in CRM), and each Account is linked to several Contacts. Here's the challenge - users need to be able to select the Contact for each job opening they would like to have the email notification sent to.

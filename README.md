@@ -16,3 +16,22 @@ Suppose you have a Creator Form to help a recruitment agency place talents to jo
     * Create a map of each Contact Name (key) and Contact ID (value) and put it in another hidden multi-line field.
   * Update a hidden checkbox field called "Trigger", that will trigger another script to get the contact list of each Account from the hidden multi-line field, then add them as picklist values to the "Contact Person" field respective to the Employer field for each row created in the "Employer Contact Person" subform.
 
+## Tutorial
+
+### Script (Trigger: Confirm == true)
+
+#### Show the Subform and Set Counters
+* When Confirm == true, we *show* the Employer Contact Person subform (remember to *hide* the subform on load of the form for this to work).
+* *mp* is used to store the Account Name - Contact List map.
+* *string* is defined as an empty string to collect values to form the Contact Name - Contact ID map.
+* *employerList* is used for validation later so that the Employer Contact Person does not have repeated values if there are multiple job openings selected that belong to the same account.
+
+```javascript
+if(input.Confirm == true)
+{
+	show Employer_Contact_Person;
+	//Counter
+	mp = Map();
+	string = "";
+	employerList = List();
+ ```

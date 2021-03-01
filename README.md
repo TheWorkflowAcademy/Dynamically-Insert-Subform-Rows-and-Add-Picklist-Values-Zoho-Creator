@@ -50,11 +50,11 @@ if(input.Confirm == true)
 			jo = ifNull(e.Active_Job_Openings,"");
 			if(jo != "")
 			{
-				//Get the Employer ID
+				//Get the Job Opening ID
 				joMap = input.Job_Openings_Map.toMap();
 				//info joMap;
 				joID = joMap.get(employer).toLong();
-				info employerID;
+				info joID;
  ```
  
  #### Get the Contact and Account Name
@@ -64,7 +64,7 @@ if(input.Confirm == true)
  ```javascript
  
  				//Get the Account
-				jobOpening = zoho.crm.getRecordById("Job_Openings",employerID);
+				jobOpening = zoho.crm.getRecordById("Job_Openings",joID);
 				accountid = jobOpening.get("Account_Lookup").get("id").toLong();
 				account = zoho.crm.getRecordById("Accounts",accountid);
 				//Get the Contacts for later

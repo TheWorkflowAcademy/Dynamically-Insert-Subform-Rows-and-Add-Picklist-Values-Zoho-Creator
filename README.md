@@ -18,7 +18,7 @@ Suppose you have a Creator Form to help a recruitment agency place talents to jo
 
 ## Tutorial
 
-### Script (Trigger: Confirm == true)
+### Script (Confirm == true)
 
 #### Show the Subform and Set Counters
 * When Confirm == true, we *show* the Employer Contact Person subform (remember to *hide* the subform on load of the form for this to work).
@@ -125,7 +125,7 @@ if(input.Confirm == true)
 * Insert the *mp* variable into the Employer Contact Map hidden multi-line field
 * Add "{" to the front of the *string* variable and "}" to the back to make it a map, and remove the additional "," at the back. Then, insert it into the 
 Contact ID Map hidden multi-line field.
-* Check the hidden "Trigger" checkbox to run the other script to dynamically add to the picklist fields (this should be placed last after everything).
+* Check the hidden "Trigger" checkbox to run [the other script](#iterate-through-the-employer-contact-person-subform,-and-add-to-the-contact-person-picklist-value)that dynamically adds to the picklist fields (this should be placed last after everything).
 * Add an else condition to hide the Employer Contact Person subform and also clear it. To increase intuitiveness, we want to hide and also clear the form should the Confirm checkbox gets unchecked (this allows users to "refresh" the Employer Contact Person" table should there be any changes or mistakes.
 
 ```javascript
@@ -145,5 +145,18 @@ else
 	{
 		input.Employer_Contact_Person.clear();
 	}
+}
+```
+### Script (Trigger == true)
+
+#### Iterate through the Employer Contact Person subform, and add to the Contact Person picklist value
+* 
+
+```javascript
+for each  emp in Employer_Contact_Person
+{
+	mp = input.Employer_Contact_Map.toMap();
+	info mp.get(emp.Employer);
+	emp.Contact_Person:ui.add(mp.get(emp.Employer));
 }
 ```

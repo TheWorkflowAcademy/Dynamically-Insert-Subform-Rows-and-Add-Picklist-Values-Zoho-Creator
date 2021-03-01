@@ -12,7 +12,7 @@ if(input.Confirm == true)
 			jo = ifNull(e.Active_Job_Openings,"");
 			if(jo != "")
 			{
-				//Get the Employer ID
+				//Get the Job Opening ID
 				//This configuration is not mentioned in this post. Job Openings Map is another hidden multi-line field that stores a map of the job opening name (key) and the ID (value)
 				//The config is written in the same script that populates the job opening picklist value on the Existing Job Openings subform
 				joMap = input.Job_Openings_Map.toMap();

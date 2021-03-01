@@ -1,0 +1,5 @@
+for each  emp in Employer_Contact_Person
+{
+	mp = input.Employer_Contact_Map.toMap();
+	emp.Contact_Person:ui.add(mp.get(emp.Employer));
+}

@@ -35,3 +35,84 @@ if(input.Confirm == true)
 	string = "";
 	employerList = List();
  ```
+ 
+ #### Iterate through the Existing Job Opening subform
+ * Have a criteria at the top to only iterate through the subform if it's not empty
+ * While iterating through each row, add another criteria to also check that the value of the row is not null
+ * If it passes through both criteria above, then we get the account ID (employer ID)
+ 	* Note: This configuration is not mentioned in this post. Job Openings Map is another hidden multi-line field that stores a map of the job opening name (key) and the ID (value). It's written in the same script that populates the job opening picklist value on the Existing Job Openings subform
+ 
+ ```javascript
+ 	if(input.Existing_Job_Opening.toList().size() > 0)
+	{
+		for each  e in input.Existing_Job_Opening
+		{
+			jo = ifNull(e.Active_Job_Openings,"");
+			if(jo != "")
+			{
+				//Get the Employer ID
+				joMap = input.Job_Openings_Map.toMap();
+				//info joMap;
+				joID = joMap.get(employer).toLong();
+				info employerID;
+ ```
+ 
+ #### Get the Contact and Account Name
+ * With the Job Openings ID, get the Job Openings record and get the Account ID that's related to it.
+ 	* This may differ based on your configuration.
+ * With the Account ID, get the related Contacts and Account Name
+ ```javascript
+ 
+ 				//Get the Account
+				jobOpening = zoho.crm.getRecordById("Job_Openings",employerID);
+				accountid = jobOpening.get("Account_Lookup").get("id").toLong();
+				account = zoho.crm.getRecordById("Accounts",accountid);
+				//Get the Contacts for later
+				contacts = zoho.crm.getRelatedRecords("Contacts","Accounts",accountid);				
+				//Get the Account Name
+				employerName = account.get("Account_Name");
+```
+
+
+#### Add the Account Name to the Employer Contact Person subform
+* We define *row_n* as the variable for the subform rows
+* Then have a criteria check above to only perform the function if the employer name is not in the *employerList* variable (this is to prevent duplicate rows).
+* Then, inside the *if* condition, add the employer name to *employerList* and add that into the Employer Contact Person subform.
+
+```javascript
+				//Add that into the Employer Contact Person subform
+				row_n = Zoho_Job_Placements_and_Intros.Employer_Contact_Person();
+				if(employerName not in employerList)
+				{
+					row_n.Employer=employerName;
+					employerList.add(employerName);
+					//Declare a variable to hold the collection of rows
+					update = Collection();
+					update.insert(row_n);
+					//Insert the rows into the subform through the variable
+					input.Employer_Contact_Person.insert(update);
+```
+
+#### Create the Contact Maps and Put in the Respective Multi-Line Fields
+* There are 2 maps that we need to create here:
+	* Map 1 - Account Name (key), Contact Names (value)
+	* Map 2 - Contact Name (key), Contact ID (value)
+* For Map 1:
+	* Iterate through the contact list that we have gotten earlier, get the Full Name and put it in the *contactList* list.
+	* Outside of the contact loop, we put variable *mp* with the Account Name (*employerName*) as the key and *contactList* as the value.
+
+* For Map 2:
+	* In the same contact loop, use the *string* variable that we have defined earlier to create a map of the contact Full Name and ID. 
+
+```javascript
+					//Create the Contact maps
+					if(contacts.size() > 0)
+					{
+						contactList = List();
+						for each  c in contacts
+						{
+							contactList.add(c.get("Full_Name"));
+							string = string + "\"" + c.get("Full_Name") + "\"" + ":" + c.get("id") + ",";
+						}
+						mp.put(employerName,contactList);
+```

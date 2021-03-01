@@ -100,12 +100,10 @@ if(input.Confirm == true)
 * For Map 1:
 	* Iterate through the contact list that we have gotten earlier, get the Full Name and put it in the *contactList* list.
 	* Outside of the contact loop, we put variable *mp* with the Account Name (*employerName*) as the key and *contactList* as the value.
-
 * For Map 2:
 	* In the same contact loop, use the *string* variable that we have defined earlier to create a map of the contact Full Name and ID. 
 
 ```javascript
-					//Create the Contact maps
 					if(contacts.size() > 0)
 					{
 						contactList = List();
@@ -115,4 +113,37 @@ if(input.Confirm == true)
 							string = string + "\"" + c.get("Full_Name") + "\"" + ":" + c.get("id") + ",";
 						}
 						mp.put(employerName,contactList);
+					}
+				}
+			}
+		}
+	}
+```
+
+#### Update the Maps and Trigger the Hidden Checkbox
+* This part of the script has to be outside the Existing Job Opening subform loop.
+* Insert the *mp* variable into the Employer Contact Map hidden multi-line field
+* Add "{" to the front of the *string* variable and "}" to the back to make it a map, and remove the additional "," at the back. Then, insert it into the 
+Contact ID Map hidden multi-line field.
+* Check the hidden "Trigger" checkbox to run the other script to dynamically add to the picklist fields (this should be placed last after everything).
+* Add an else condition to hide the Employer Contact Person subform and also clear it. To increase intuitiveness, we want to hide and also clear the form should the Confirm checkbox gets unchecked (this allows users to "refresh" the Employer Contact Person" table should there be any changes or mistakes.
+
+```javascript
+	//Insert Map 1
+	input.Employer_Contact_Map = mp.toString();
+	//Insert Map 2
+	mapstring = "{" + string + "}";
+	mapstring = mapstring.removeLastOccurence(",");
+	input.Contact_ID_Map = mapstring;
+	//Trigger the hidden checkbox
+	input.Trigger = true;
+}
+else
+{
+	hide Employer_Contact_Person;
+	if(input.Employer_Contact_Person.toList().size() > 0)
+	{
+		input.Employer_Contact_Person.clear();
+	}
+}
 ```
